@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Installing required Python libraries..."
-pip install numpy librosa matplotlib soundfile scipy
+pip install numpy librosa soundfile matplotlib
 echo "Installation complete."
