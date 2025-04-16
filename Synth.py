@@ -182,7 +182,7 @@ def synthesize(desc, weights):
 
     # Harmonic base signal
     signal = np.zeros_like(t)
-    harmonics = 10
+    harmonics = int(weights.get('Harmonics', 10))
     for h in range(1, harmonics + 1):
         inharm_mod = (1 + weights['InHarm'] * desc['InHarm'])
         freq_shift = h * f0_interp * inharm_mod
@@ -234,7 +234,8 @@ def launch_gui():
         'InHarm', 'HarmDev', 'OddEveRatio',        # Harmonics
         'NoiseErg', 'Noisiness',                   # Noise layer control
         'SpecCent', 'SpecSlope',                   # Spectral shaping
-        'EnergyScale'                              # Global amplitude control
+        'EnergyScale',                              # Global amplitude control
+        'Harmonics' 
     ]
 
 
@@ -248,7 +249,8 @@ def launch_gui():
             if key in desc and isinstance(desc[key], (float, int, np.float32, np.float64)):
                 val = float(desc[key])
                 val = np.clip(val, 0.0, 1.0) if not np.isinf(val) else 0.5
-                slider.set(val)
+                sliders[key].set(val)
+
         refresh_curve_thumbnails()
 
     def do_synthesize():
@@ -331,7 +333,17 @@ def launch_gui():
         col = idx % num_columns
         lbl = ttk.Label(slider_frame, text=key)
         lbl.grid(row=row, column=col*2, sticky='e', padx=5, pady=2)
-        slider = tk.Scale(slider_frame, from_=0, to=1.0, resolution=0.01, orient='horizontal', length=300)
+        if key == 'Harmonics':
+            slider = tk.Scale(slider_frame, from_=1, to=20, resolution=1, orient='horizontal', length=300)
+            slider.set(10)
+        elif key in ['SpecCent', 'SpecSlope', 'TempCent', 'FreqMod']:  # log-sensitive descriptors
+            slider = tk.Scale(slider_frame, from_=0.001, to=1.0, resolution=0.001, orient='horizontal', length=300)
+            slider.set(0.01)
+        elif key == 'EnergyScale':
+            slider = tk.Scale(slider_frame, from_=0, to=1.0, resolution=0.01, orient='horizontal', length=300)
+            slider.set(1)
+        else:
+            slider = tk.Scale(slider_frame, from_=-10000, to=10000, resolution=1, orient='horizontal', length=300)
         slider.grid(row=row, column=col*2 + 1, sticky='w', padx=5, pady=2)
         sliders[key] = slider
 
