@@ -1,44 +1,62 @@
 #!/bin/bash
 
-echo "🎬 Descriptor Synth Launcher"
+echo ""
+echo "🎬 Launching Descriptor Synth"
+echo "----------------------------"
 echo ""
 
-# Check for Python 3.10+
-PYTHON=$(command -v python3 || command -v python)
-if [[ -z "$PYTHON" ]]; then
-    echo "❌ Python not found. Please install Python 3.10+"
+# Detect OS and choose python command
+if [[ "$OS" == "Windows_NT" ]]; then
+    PYTHON=py
+else
+    PYTHON=$(command -v python3 || command -v python)
+fi
+
+# Check if Python is available
+if ! command -v $PYTHON &> /dev/null; then
+    echo "❌ Python not found. Please install Python 3.10+."
+    read -p "Press Enter to exit..."
     exit 1
 fi
 
-PYVER=$($PYTHON -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+# Check version
+PYVER=$($PYTHON -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
 REQUIRED_VER="3.10"
 
-vercomp () {
-    if [[ "$1" == "$2" ]]; then return 0; fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do ver1[i]=0; done
-    for ((i=0; i<${#ver1[@]}; i++)); do
-        if [[ -z ${ver2[i]} ]]; then ver2[i]=0; fi
-        if ((10#${ver1[i]} < 10#${ver2[i]})); then return 1; fi
-        if ((10#${ver1[i]} > 10#${ver2[i]})); then return 0; fi
-    done
-    return 0
-}
-
-if ! vercomp "$PYVER" "$REQUIRED_VER"; then
-    echo "❌ Python $PYVER is too old. Please install Python $REQUIRED_VER or newer."
+ver_ok=$($PYTHON -c "import sys; print(sys.version_info >= (3, 10))")
+if [[ "$ver_ok" != "True" ]]; then
+    echo "❌ Found Python $PYVER — need version 3.10 or higher."
+    read -p "Press Enter to exit..."
     exit 1
 fi
 
 echo "✓ Python $PYVER found."
 
-# Install requirements if needed
-echo "Installing required Python packages..."
-$PYTHON -m pip install --upgrade pip
-$PYTHON -m pip install numpy scipy matplotlib librosa soundfile sounddevice
-
-# Run the main Python script
+# Install required packages
 echo ""
-echo "🚀 Running Descriptor Synth..."
+echo "🔍 Installing Python packages..."
+$PYTHON -m pip install --quiet --upgrade pip
+$PYTHON -m pip install --quiet numpy scipy matplotlib librosa soundfile
+
+# Run your script
+if [[ ! -f "script.py" ]]; then
+    echo "❌ script.py not found in the current folder."
+    read -p "Press Enter to exit..."
+    exit 1
+fi
+
+echo ""
+echo "🚀 Running script.py..."
 $PYTHON script.py
+
+status=$?
+if [[ $status -ne 0 ]]; then
+    echo ""
+    echo "❌ script.py exited with error code $status"
+    read -p "Press Enter to exit..."
+    exit $status
+fi
+
+echo ""
+echo "✅ Done!"
+read -p "Press Enter to close..."
