@@ -77,7 +77,7 @@ descriptor-synthesis/
 
 ## 📄 License
 
-This project is licensed under the terms of the [Commercial License](LICENSE).
+This project is licensed under the terms of the [Commercial License](../LICENSE).
 
 ---
 
