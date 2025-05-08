@@ -1,95 +1,91 @@
-# 🎵 Descriptor Synth
+# Descriptor-Controlled Audio Synthesis
 
-**Descriptor Synth** is a Python-based audio analysis and synthesis tool. It extracts temporal and spectral descriptors from a `.wav` file and uses them to control a synthesis engine via a graphical interface.
+**Descriptor-Controlled Synthesis** is a creative sound tool that transforms the sonic qualities of an existing sound into controls for generating new audio. You load a sound, extract its unique "descriptors," and use them to guide synthesis in a visually rich, GUI-based playground.
 
----
-
-## 🚀 Features
-
-- Descriptor extraction (ADSR, spectral centroid, skewness, flatness, etc.)
-- GUI with sliders for real-time descriptor manipulation
-- Curve editor for time-varying descriptor visualization and editing
-- Additive synthesis engine with noise and spectral shaping
-- Live playback and export to `.wav`
+Designed with musicians and sound designers in mind, this tool is for exploring timbre through descriptors — no programming required.
 
 ---
 
-## 📦 Requirements
+## 🎛 Features
 
-- Python 3.10 or higher  
-- Dependencies:
-  ```
-  pip install numpy scipy matplotlib librosa soundfile sounddevice
-  ```
-
-> On Windows, use the `py` launcher if `python` isn't recognized.
-
----
-
-## 🖥 Installation
-
-1. Clone or download this repository.
-2. Place your audio file (e.g., `input.wav`) in the same folder.
-3. Install requirements:
-   ```bash
-   pip install numpy scipy matplotlib librosa soundfile sounddevice
-   ```
+- 🎨 Easy-to-use **Graphical Interface** for tweaking and sculpting sound
+- 🔎 Intelligent **descriptor extraction** (e.g., attack, spectral centroid, noisiness)
+- 🧠 Custom **curve editing** for time-varying control
+- 🎚 Interactive **parameter sliders** grouped by sound properties
+- 🔊 Built-in audio playback and waveform/spectrogram preview
+- 💾 Save and load your own descriptor curves
 
 ---
 
-## ▶️ Usage
+## 📦 Download & Installation
 
-Run the main script:
+### 👶 For Beginners (No Git, No Terminal)
+
+1. Go to the [GitHub Releases](https://github.com/yourusername/descriptor-synthesis/releases) page *(or wherever the .zip is hosted)*.
+2. Download the latest `.zip` file.
+3. Right-click → **Extract All** (Windows) or double-click the zip to extract (macOS).
+4. Inside the folder, double-click:
+   - `Launcher.bat` for **Windows**
+   - or run `Launcher.sh` on **macOS/Linux**
+
+This will automatically:
+- Check/install Python 3.10
+- Install needed libraries
+- Open the GUI for you
+
+### 🧑‍💻 For Developers (Git Method)
 
 ```bash
-python script.py
-```
-
-or on Windows:
-
-```bash
-py script.py
+git clone https://github.com/yourusername/descriptor-synthesis.git
+cd descriptor-synthesis
+./Launcher.sh  # or double-click Launcher.bat on Windows
 ```
 
 ---
 
-## 🎛 GUI Overview
+## 🖥 How to Use
 
-- **Load WAV**: Load your audio file.
-- **Synthesize & Play**: Analyze and synthesize based on current settings.
-- **Save As...**: Export the synthesized audio.
-- **Sliders**: Adjust descriptor weights for synthesis.
-- **Curve Editor**: Click any descriptor thumbnail to open an editable plot.
-
----
-
-## 🧠 How It Works
-
-1. Extracts descriptors from the input audio using STFT and custom functions.
-2. Maps these descriptors to synthesis parameters.
-3. Generates new sound via additive synthesis + noise + envelope.
-4. Provides real-time control and preview of changes through the GUI.
+1. Click the 📂 button to **load a sound file** (.wav or .mp3).
+2. The tool extracts **descriptors** like envelope shape, energy, pitch, and spectral features.
+3. Use the sliders and visual curves to tweak each parameter.
+4. Click ▶️ to **generate and hear** your custom sound.
+5. Optionally, save descriptor sets or load new ones.
 
 ---
 
-## 📝 Modifications
+## 📁 Folder Structure
 
-To change the input file, edit the script or load a file from the GUI.
-
-To customize descriptor mappings or synthesis logic, look into:
-- `extract_descriptors(...)`
-- `synthesize(...)`
+```
+descriptor-synthesis/
+├── Code/
+│   ├── GUI.py
+│   ├── Extractor.py
+│   ├── Engine.py
+│   ├── Curve.py
+├── Inputs/                # Put audio files here to work with
+├── Outputs/               # Synthesized results and saved descriptor data
+├── Docs/
+│   ├── README.md          # This file
+│   ├── goal.pdf           # Project concept overview
+│   └── references/        # Research and citations
+├── Launcher.sh            # Startup script for macOS/Linux
+├── Launcher.bat           # Startup for Windows
+└── LICENSE                # License info
+```
 
 ---
 
-## 🐞 Troubleshooting
+## 📄 License
 
-- ❌ **"Python not found"**: Use `py` on Windows or install Python from [python.org](https://www.python.org/downloads/)
-- ❌ **"No module named librosa"**: Run `pip install librosa`
-- ❌ **No output or sound**: Check your audio device and descriptor values
+This project is licensed under the terms of the [Commercial License](LICENSE).
 
 ---
 
-## 📃 License
+## 💬 Feedback & Contributions
 
-Commercial License – feel free to contact me for any info.
+Are you a sound designer or musician with ideas? Found a bug? Want to improve the GUI?  
+Feel free to open an issue or submit a pull request — your input is welcome!
+
+---
+
+Happy synthesizing! 🎶
