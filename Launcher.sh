@@ -1,44 +1,72 @@
 #!/bin/bash
 
-echo "🎬 Descriptor Synth Launcher"
-echo ""
+# === Style ===
+RED='\033[0;31m'
+GRN='\033[0;32m'
+YLW='\033[1;33m'
+NC='\033[0m'
 
-# Check for Python 3.10+
-PYTHON=$(command -v python3 || command -v python)
-if [[ -z "$PYTHON" ]]; then
-    echo "❌ Python not found. Please install Python 3.10+"
+echo -e "\n${GRN}Descriptor Synth Launcher — macOS/Linux${NC}"
+echo "--------------------------------------------"
+
+REQUIRED="3.10"
+PY=$(command -v python3.10 || command -v python3 || command -v python)
+
+# --- Python Check ---
+if [[ -z "$PY" ]]; then
+    echo -e "${RED}Python not found.${NC}"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if command -v brew &>/dev/null; then
+            echo -e "${YLW}Installing Python via Homebrew...${NC}"
+            brew install python@3.10
+        else
+            echo -e "${RED}Homebrew not found.${NC}"
+            echo "Please install Python 3.10 manually from: https://www.python.org/downloads/mac-osx/"
+            exit 1
+        fi
+    else
+        echo -e "${YLW}Installing Python via APT...${NC}"
+        sudo apt update && sudo apt install -y python3.10 python3.10-venv python3.10-dev
+    fi
+    PY=$(command -v python3.10)
+fi
+
+VERSION=$($PY -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+if [[ "$(printf '%s\n' "$REQUIRED" "$VERSION" | sort -V | head -n1)" != "$REQUIRED" ]]; then
+    echo -e "${RED}Found Python $VERSION — 3.10+ required.${NC}"
+    exit 1
+fi
+echo -e "${GRN}Python $VERSION OK${NC}"
+
+# --- pip check ---
+if ! $PY -m pip --version &>/dev/null; then
+    echo -e "${YLW}Installing pip...${NC}"
+    curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    $PY get-pip.py && rm get-pip.py
+fi
+
+echo -e "${GRN}pip available${NC}"
+
+# --- Dependency check ---
+DEPS=(numpy scipy matplotlib librosa soundfile sounddevice)
+MISSING=()
+for pkg in "${DEPS[@]}"; do
+    $PY -c "import $pkg" &>/dev/null || MISSING+=($pkg)
+done
+
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+    echo -e "${YLW}Installing missing packages: ${MISSING[*]}${NC}"
+    $PY -m pip install --quiet "${MISSING[@]}"
+else
+    echo -e "${GRN}All dependencies already satisfied${NC}"
+fi
+
+# --- Run GUI ---
+GUI_PATH="./Code/GUI.py"
+if [[ ! -f "$GUI_PATH" ]]; then
+    echo -e "${RED}GUI.py not found in ./Code${NC}"
     exit 1
 fi
 
-PYVER=$($PYTHON -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-REQUIRED_VER="3.10"
-
-vercomp () {
-    if [[ "$1" == "$2" ]]; then return 0; fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do ver1[i]=0; done
-    for ((i=0; i<${#ver1[@]}; i++)); do
-        if [[ -z ${ver2[i]} ]]; then ver2[i]=0; fi
-        if ((10#${ver1[i]} < 10#${ver2[i]})); then return 1; fi
-        if ((10#${ver1[i]} > 10#${ver2[i]})); then return 0; fi
-    done
-    return 0
-}
-
-if ! vercomp "$PYVER" "$REQUIRED_VER"; then
-    echo "❌ Python $PYVER is too old. Please install Python $REQUIRED_VER or newer."
-    exit 1
-fi
-
-echo "✓ Python $PYVER found."
-
-# Install requirements if needed
-echo "Installing required Python packages..."
-$PYTHON -m pip install --upgrade pip
-$PYTHON -m pip install numpy scipy matplotlib librosa soundfile sounddevice
-
-# Run the main Python script
-echo ""
-echo "🚀 Running Descriptor Synth..."
-$PYTHON script.py
+echo -e "${GRN}Launching GUI...${NC}\n"
+$PY "$GUI_PATH"
