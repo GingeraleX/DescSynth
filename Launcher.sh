@@ -6,7 +6,7 @@ GRN='\033[0;32m'
 YLW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "\n${GRN}Descriptor Synth Launcher — macOS/Linux${NC}"
+echo -e "\n${GRN}Descriptor Synth Launcher${NC}"
 echo "--------------------------------------------"
 
 REQUIRED="3.10"

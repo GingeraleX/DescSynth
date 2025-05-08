@@ -14,7 +14,7 @@ set "YLW=[33m"
 set "NC=[0m"
 
 echo.
-echo %GRN%Descriptor Synth Launcher — Windows%NC%
+echo %GRN%Descriptor Synth Launcher%NC%
 echo ----------------------------------------
 
 :: --- Check Python ---
